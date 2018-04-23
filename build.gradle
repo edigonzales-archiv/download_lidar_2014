@@ -1,0 +1,36 @@
+def baseUrl = "https://geoweb.so.ch/lidar/2014/dtm/50cm/"
+def postfix = "_50cm.tif"
+def downloadDir = "/Users/stefan/Vagrant/postgres-10-postgis-2.4/dtm/"
+
+task downloadDTM2014() {
+    doLast {
+        def xMin = 2592
+        def yMin = 1213
+
+        def xMax = 2645
+        def yMax = 1262
+
+        xMin.step xMax, 1, { x ->
+            println x
+
+            yMin.step yMax, 1, { y ->
+                def url = baseUrl + x + y + postfix
+                println url
+
+                def filename = downloadDir + x + y + postfix
+                println filename
+
+                // Weiterleitung funktioniert so einfach nicht.
+                try {
+                    def file = new File(filename).newOutputStream()
+                    file << new URL(url).openStream()
+                    file.close()
+                } catch (FileNotFoundException e) {
+                    // do nothing
+                }
+            }
+
+        }
+        println "fubar"
+    }
+}
